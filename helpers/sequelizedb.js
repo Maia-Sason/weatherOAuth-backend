@@ -14,20 +14,32 @@ testDB();
 
 class LocationTable extends Model {}
 
-LocationTable.init({});
+LocationTable.init(
+  {},
+  {
+    sequelize, // Pass the connection instance
+    modelName: "LocationTable", // Choose a model name
+  }
+);
 
 class Location extends Model {}
 
-Location.init({
-  longitude: {
-    type: DataTypes.STRING,
-    allowNull: false,
+Location.init(
+  {
+    longitude: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    latitude: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
-  latitude: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
+  {
+    sequelize, // Pass the connection instance
+    modelName: "Location", // Choose a model name
+  }
+);
 
 class User extends Model {}
 
@@ -94,10 +106,42 @@ LocationTable.belongsTo(User);
 LocationTable.hasMany(Location);
 Location.belongsTo(LocationTable);
 
-syncDB();
+const setNewLocation = async (long, lat, user) => {
+  let locationTable = await LocationTable.findOne({
+    where: { UserId: user.id },
+  });
+
+  if (locationTable == null) {
+    console.log("No table exists.. Creating location table..");
+    locationTable = new LocationTable({
+      UserId: user.id,
+    });
+    locationTable.save();
+    console.log("Saving new table..");
+  }
+
+  let location = await Location.findOne({
+    where: { LocationTableId: locationTable.id },
+  });
+  if (location == null) {
+    console.log("No location matches, updating location!");
+    console.log(long);
+    console.log(lat);
+    location = new Location({
+      longitude: long,
+      latitude: lat,
+      LocationTableId: locationTable.id,
+    });
+    location.save();
+    console.log("Saving new user location.");
+  }
+};
+
+sequelize.sync();
 
 module.exports = {
   User,
   Location,
   findUser,
+  setNewLocation,
 };

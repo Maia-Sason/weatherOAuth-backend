@@ -2,6 +2,8 @@ const db = require("./helpers/sequelizedb"); // Database
 const express = require("express"); // Express framework
 const cors = require("cors"); // cors cross origin resource sharing :)
 const passport = require("passport"); // passport authentication for node (Oauth)
+const api_helper = require("./helpers/api_helpers");
+const axios = require("axios");
 
 require("dotenv").config();
 var fs = require("fs");
@@ -14,7 +16,9 @@ const session = require("express-session"); // Store user data btwn HTTP request
 
 app.use(
   cors({
-    origin: "https://localhost:3000",
+    origin: "http://localhost:3000",
+    methods: "GET, POST, PATCH, DELETE, PUT",
+    allowedHeaders: "Content-Type, Authorization",
     credentials: true,
   })
 );
@@ -89,16 +93,76 @@ app.get("/login/facebook", (request, response, next) => {
 app.get("/return", (request, response, next) => {
   passport.authenticate("facebook", {
     failureRedirect: "/login",
-    successRedirect: "/home",
+    successRedirect: "/logged",
   })(request, response, next);
 });
 
-app.get("/home", (request, response) => {
+app.get("/logged", (request, response) => {
+  // Redirect from server redirect right back to client! :)))
+  response.redirect("http://localhost:3000/login");
+});
+
+app.get("/auth", (request, response) => {
+  console.log("trying to auth user");
   if (request.isAuthenticated()) {
-    response.json({ User: `hello ${request.user.firstName}` });
+    response.json({ success: `hello ${request.user.firstName}` });
   } else {
     response.json({ error: "YOU ARE NOT AUTHENTICATED" });
   }
+});
+
+app.get("/user", (request, response) => {
+  console.log("Loading user information");
+  if (request.isAuthenticated()) {
+    console.log(request.user);
+    response.json(request.user);
+  } else {
+    response.json({ error: "User not authenticated!" });
+  }
+});
+
+app.post("/weather", async (request, response) => {
+  let latitude = request.body.lat;
+  let longitude = request.body.long;
+
+  if (
+    !request.isAuthenticated() &&
+    (latitude == undefined || longitude == undefined)
+  ) {
+    console.log("ERROR 1");
+    response.json({
+      error: "User needs to be authenticated for this feature!",
+    });
+  } else {
+    try {
+      const res = await axios.get(
+        `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=imperial&appid=${process.env.WEATHER_API_KEY}`
+      );
+      console.log(res.data);
+      response.json(res.data);
+    } catch (err) {
+      console.log("ERROR 2");
+      response.json({
+        error: "There was an issue retrieving weather information.",
+      });
+    }
+  }
+});
+
+app.post("/location", async (request, response) => {
+  if (!request.isAuthenticated()) {
+    response.json({
+      error: "User needs to be authenticated for this feature!",
+    });
+  }
+  console.log("Retrieving new location");
+  let latitude = request.body.lat;
+  let longitude = request.body.long;
+
+  console.log(`long, lat before db: ${longitude}, ${latitude}`);
+
+  await db.setNewLocation(longitude, latitude, request.user);
+  response.json({ success: `Your location is ${longitude}, ${latitude}` });
 });
 
 const port = 3003;
