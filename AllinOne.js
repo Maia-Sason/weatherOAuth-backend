@@ -136,7 +136,7 @@ app.post("/weather", async (request, response) => {
   } else {
     try {
       const res = await axios.get(
-        `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=imperial&appid=${process.env.WEATHER_API_KEY}`
+        `http://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=imperial&appid=${process.env.WEATHER_API_KEY}`
       );
       console.log(res.data);
       response.json(res.data);
