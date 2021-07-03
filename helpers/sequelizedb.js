@@ -142,6 +142,7 @@ sequelize.sync();
 module.exports = {
   User,
   Location,
+  LocationTable,
   findUser,
   setNewLocation,
 };

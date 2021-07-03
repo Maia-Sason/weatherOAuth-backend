@@ -111,11 +111,20 @@ app.get("/auth", (request, response) => {
   }
 });
 
-app.get("/user", (request, response) => {
+app.get("/user", async (request, response) => {
   console.log("Loading user information");
   if (request.isAuthenticated()) {
-    console.log(request.user);
-    response.json(request.user);
+    let table = await db.LocationTable.findOne({
+      where: { UserId: request.user.id },
+    });
+    let locations = await db.Location.findAll({
+      attributes: ["longitude", "latitude"],
+      where: { LocationTableId: 1 },
+    });
+
+    data = Object.assign({}, request.user, { locations: locations });
+
+    response.json(data);
   } else {
     response.json({ error: "User not authenticated!" });
   }
@@ -129,7 +138,6 @@ app.post("/weather", async (request, response) => {
     !request.isAuthenticated() &&
     (latitude == undefined || longitude == undefined)
   ) {
-    console.log("ERROR 1");
     response.json({
       error: "User needs to be authenticated for this feature!",
     });
@@ -138,10 +146,9 @@ app.post("/weather", async (request, response) => {
       const res = await axios.get(
         `http://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=imperial&appid=${process.env.WEATHER_API_KEY}`
       );
-      console.log(res.data);
+
       response.json(res.data);
     } catch (err) {
-      console.log("ERROR 2");
       response.json({
         error: "There was an issue retrieving weather information.",
       });
@@ -163,6 +170,11 @@ app.post("/location", async (request, response) => {
 
   await db.setNewLocation(longitude, latitude, request.user);
   response.json({ success: `Your location is ${longitude}, ${latitude}` });
+});
+
+app.get("/logout", (request, response) => {
+  request.logOut();
+  response.json({ success: "Logged out" });
 });
 
 const port = 3003;
