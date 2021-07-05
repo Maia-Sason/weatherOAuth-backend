@@ -106,6 +106,22 @@ LocationTable.belongsTo(User);
 LocationTable.hasMany(Location);
 Location.belongsTo(LocationTable);
 
+const newTable = async (user) => {
+  let locationTable = await LocationTable.findOne({
+    where: { UserId: user.id },
+  });
+
+  if (locationTable == null) {
+    console.log("No table exists.. Creating location table..");
+    locationTable = new LocationTable({
+      UserId: user.id,
+    });
+    locationTable.save();
+    console.log("Saving new table..");
+    return locationTable;
+  }
+};
+
 const setNewLocation = async (long, lat, user) => {
   let locationTable = await LocationTable.findOne({
     where: { UserId: user.id },
@@ -151,4 +167,5 @@ module.exports = {
   LocationTable,
   findUser,
   setNewLocation,
+  newTable,
 };

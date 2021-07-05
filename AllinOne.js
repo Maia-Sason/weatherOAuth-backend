@@ -50,12 +50,14 @@ passport.deserializeUser(function (user, cb) {
 });
 
 // Facebook
+
+//  "http://localhost:3003/return"
 passport.use(
   new Strategy(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      callbackURL: "https://weatherlocation.herokuapp.com/return",
+      callbackURL: process.env.FACEBOOK_CALLBACK,
       profileFields: ["id", "displayName", "picture", "email"],
     },
     async function (accessToken, refreshToken, profile, done) {
@@ -117,6 +119,11 @@ app.get("/user", async (request, response) => {
     let table = await db.LocationTable.findOne({
       where: { UserId: request.user.id },
     });
+
+    if (table === undefined) {
+      table = await db.newTable(request.user);
+    }
+
     let locations = await db.Location.findAll({
       attributes: ["longitude", "latitude"],
       where: { LocationTableId: table.id },
