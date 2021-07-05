@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./AllinOne.js"
+    "start_test": "nodemon ./AllinOne.js",
+    "start": "node ./AllinOne.js"
   },
   "dependencies": {
     "axios": "^0.21.1",

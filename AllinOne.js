@@ -55,7 +55,7 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_CLIENT_ID,
       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      callbackURL: "http://localhost:3003/return",
+      callbackURL: "https://weatherlocation.herokuapp.com/return",
       profileFields: ["id", "displayName", "picture", "email"],
     },
     async function (accessToken, refreshToken, profile, done) {
@@ -211,7 +211,7 @@ app.get("/logout", (request, response) => {
   response.json({ success: "Logged out" });
 });
 
-const port = 3003;
+const port = process.env.PORT || 3003;
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}!`);
