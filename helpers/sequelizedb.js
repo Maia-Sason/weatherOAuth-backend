@@ -121,8 +121,13 @@ const setNewLocation = async (long, lat, user) => {
   }
 
   let location = await Location.findOne({
-    where: { LocationTableId: locationTable.id },
+    where: {
+      LocationTableId: locationTable.id,
+      longitude: long,
+      latitude: lat,
+    },
   });
+
   if (location == null) {
     console.log("No location matches, updating location!");
     console.log(long);
@@ -135,6 +140,7 @@ const setNewLocation = async (long, lat, user) => {
     location.save();
     console.log("Saving new user location.");
   }
+  return;
 };
 
 sequelize.sync();
