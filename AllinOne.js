@@ -94,8 +94,8 @@ app.get("/api/login/facebook", (request, response, next) => {
 
 app.get("/api/return", (request, response, next) => {
   passport.authenticate("facebook", {
-    failureRedirect: "api/login",
-    successRedirect: "api/logged",
+    failureRedirect: "/api/login",
+    successRedirect: "/api/logged",
   })(request, response, next);
 });
 
