@@ -92,19 +92,19 @@ app.get("/login/facebook", (request, response, next) => {
   return;
 });
 
-app.get("/return", (request, response, next) => {
+app.get("/api/return", (request, response, next) => {
   passport.authenticate("facebook", {
     failureRedirect: "/login",
     successRedirect: "/logged",
   })(request, response, next);
 });
 
-app.get("/logged", (request, response) => {
+app.get("/api/logged", (request, response) => {
   // Redirect from server redirect right back to client! :)))
   response.redirect("http://localhost:3000/login");
 });
 
-app.get("/auth", (request, response) => {
+app.get("/api/auth", (request, response) => {
   console.log("trying to auth user");
   if (request.isAuthenticated()) {
     response.json({ success: `hello ${request.user.firstName}` });
@@ -113,7 +113,7 @@ app.get("/auth", (request, response) => {
   }
 });
 
-app.get("/user", async (request, response) => {
+app.get("/api/user", async (request, response) => {
   console.log("Loading user information");
   if (request.isAuthenticated()) {
     let table = await db.LocationTable.findOne({
@@ -137,7 +137,7 @@ app.get("/user", async (request, response) => {
   }
 });
 
-app.get("/all", async (request, response) => {
+app.get("/api/all", async (request, response) => {
   if (!request.isAuthenticated()) {
     response.json({
       error: "User needs to be authenticated for this feature!",
@@ -171,7 +171,7 @@ app.get("/all", async (request, response) => {
   }
 });
 
-app.post("/weather", async (request, response) => {
+app.post("/api/weather", async (request, response) => {
   let latitude = request.body.lat;
   let longitude = request.body.long;
 
@@ -197,7 +197,7 @@ app.post("/weather", async (request, response) => {
   }
 });
 
-app.post("/location", async (request, response) => {
+app.post("/api/location", async (request, response) => {
   if (!request.isAuthenticated()) {
     response.json({
       error: "User needs to be authenticated for this feature!",
@@ -213,7 +213,7 @@ app.post("/location", async (request, response) => {
   response.json({ success: `Your location is ${longitude}, ${latitude}` });
 });
 
-app.get("/logout", (request, response) => {
+app.get("/api/logout", (request, response) => {
   request.logOut();
   response.json({ success: "Logged out" });
 });
