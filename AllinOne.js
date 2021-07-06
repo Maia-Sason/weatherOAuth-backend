@@ -77,7 +77,7 @@ app.use(
   })
 );
 
-app.get("/login/facebook", (request, response, next) => {
+app.get("api/login/facebook", (request, response, next) => {
   console.log("trying to log in user");
   // response.status(200).json({ Test: "log in route" });
   /* using Facebook Oauth, check if
