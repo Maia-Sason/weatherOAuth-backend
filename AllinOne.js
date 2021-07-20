@@ -4,6 +4,7 @@ const cors = require("cors"); // cors cross origin resource sharing :)
 const passport = require("passport"); // passport authentication for node (Oauth)
 const api_helper = require("./helpers/api_helpers");
 const axios = require("axios");
+const path = require("path");
 
 require("dotenv").config();
 var fs = require("fs");
@@ -14,14 +15,14 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser"); // Parse requests/response Obj's
 const session = require("express-session"); // Store user data btwn HTTP requests and make it stateful
 
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: "GET, POST, PATCH, DELETE, PUT",
-    allowedHeaders: "Content-Type, Authorization",
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000",
+//     methods: "GET, POST, PATCH, DELETE, PUT",
+//     allowedHeaders: "Content-Type, Authorization",
+//     credentials: true,
+//   })
+// );
 
 app.use(
   session({
@@ -101,7 +102,7 @@ app.get("/api/return", (request, response, next) => {
 
 app.get("/api/logged", (request, response) => {
   // Redirect from server redirect right back to client! :)))
-  response.redirect("http://localhost:3000/login");
+  response.redirect("/");
 });
 
 app.get("/api/auth", (request, response) => {
@@ -216,6 +217,11 @@ app.post("/api/location", async (request, response) => {
 app.get("/api/logout", (request, response) => {
   request.logOut();
   response.json({ success: "Logged out" });
+});
+
+app.use(express.static(path.join(__dirname, "build")));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 const port = process.env.PORT || 3003;
