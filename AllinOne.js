@@ -103,6 +103,7 @@ app.get("/api/return", (request, response, next) => {
 app.get("/api/logged", (request, response) => {
   // Redirect from server redirect right back to client! :)))
   response.redirect("/");
+  console.log("Success!");
 });
 
 app.get("/api/auth", (request, response) => {
