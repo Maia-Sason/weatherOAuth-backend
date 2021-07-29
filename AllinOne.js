@@ -36,7 +36,7 @@ app.use(
   })
 );
 
-app.use("/api", authRouter);
+app.use("/auth", authRouter);
 
 app.get("/api/user", async (request, response) => {
   console.log("Loading user information");

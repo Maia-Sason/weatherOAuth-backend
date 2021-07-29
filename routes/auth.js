@@ -23,12 +23,12 @@ router.get("/logged", (request, response) => {
 
 router.get("/return", (request, response, next) => {
   passport.authenticate("facebook", {
-    failureRedirect: "/api/login",
-    successRedirect: "/api/logged",
+    failureRedirect: "/auth/login",
+    successRedirect: "/auth/logged",
   })(request, response, next);
 });
 
-router.get("/auth", (request, response) => {
+router.get("/", (request, response) => {
   console.log("trying to auth user");
   if (request.isAuthenticated()) {
     response.json({ success: `hello ${request.user.firstName}` });
