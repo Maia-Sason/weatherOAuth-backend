@@ -40,7 +40,6 @@ const createUser = (request, response) => {
       if (error) {
         return response.status(500).send(error);
       }
-      console.log(results.rows[0].id);
       return response
         .status(200)
         .send(`Created new user with id: ${results.rows[0].id}`);

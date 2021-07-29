@@ -15,15 +15,6 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser"); // Parse requests/response Obj's
 const session = require("express-session"); // Store user data btwn HTTP requests and make it stateful
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000",
-//     methods: "GET, POST, PATCH, DELETE, PUT",
-//     allowedHeaders: "Content-Type, Authorization",
-//     credentials: true,
-//   })
-// );
-
 app.use(
   session({
     secret: "secretcode",
@@ -52,7 +43,6 @@ passport.deserializeUser(function (user, cb) {
 
 // Facebook
 
-//  "http://localhost:3003/return"
 passport.use(
   new Strategy(
     {
@@ -62,8 +52,6 @@ passport.use(
       profileFields: ["id", "displayName", "picture", "email"],
     },
     async function (accessToken, refreshToken, profile, done) {
-      console.log("arrived ");
-      console.log(JSON.stringify(profile));
       let user1 = await db.findUser(profile);
       console.log("currently " + user1.firstName);
       done(null, await db.findUser(profile));
@@ -80,7 +68,6 @@ app.use(
 
 app.get("/api/login/facebook", (request, response, next) => {
   console.log("trying to log in user");
-  // response.status(200).json({ Test: "log in route" });
   /* using Facebook Oauth, check if
     user associated with facebook exists in db,
     if not create a user for them and log them in 
@@ -161,7 +148,6 @@ app.get("/api/all", async (request, response) => {
         const res = await axios.get(
           `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=imperial&appid=${process.env.WEATHER_API_KEY}`
         );
-        console.log(res.data);
         list.push(res.data);
       } catch (err) {
         response.json({
