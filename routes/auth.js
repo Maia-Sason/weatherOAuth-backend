@@ -37,4 +37,9 @@ router.get("/", (request, response) => {
   }
 });
 
+router.get("/logout", (request, response) => {
+  request.logOut();
+  response.json({ success: "Logged out" });
+});
+
 module.exports = router;
