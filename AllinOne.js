@@ -28,83 +28,15 @@ app.use(cookieParser("secretcode"));
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-// // Facebook Passport:
-// const Strategy = require("passport-facebook").Strategy;
-
-// // serialize
-// passport.serializeUser(function (user, cb) {
-//   console.log("SERIALIZING... " + user.facebookID);
-//   cb(null, user);
-// });
-
-// passport.deserializeUser(function (user, cb) {
-//   console.log("DESERIALIZING... " + user.facebookID);
-//   cb(null, user);
-// });
-
-// // Facebook
-
-// passport.use(
-//   new Strategy(
-//     {
-//       clientID: process.env.FACEBOOK_CLIENT_ID,
-//       clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-//       callbackURL: process.env.FACEBOOK_CALLBACK,
-//       profileFields: ["id", "displayName", "picture", "email"],
-//     },
-//     async function (accessToken, refreshToken, profile, done) {
-//       let user1 = await db.findUser(profile);
-//       console.log("currently " + user1.firstName);
-//       done(null, await db.findUser(profile));
-//     }
-//   )
-// );
-
 app.use(bodyParser.json());
+
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
 
-// app.use("/auth", authRouter);
-
-app.get("/api/login/facebook", (request, response, next) => {
-  console.log("trying to log in user");
-  /* using Facebook Oauth, check if
-    user associated with facebook exists in db,
-    if not create a user for them and log them in 
-    
-    Response either success message or error message */
-
-  passport.authenticate("facebook", {
-    scope: ["email", "public_profile"],
-  })(request, response, next);
-  return;
-});
-
-app.get("/api/return", (request, response, next) => {
-  passport.authenticate("facebook", {
-    failureRedirect: "/api/login",
-    successRedirect: "/api/logged",
-  })(request, response, next);
-});
-
-app.get("/api/logged", (request, response) => {
-  // Redirect from server redirect right back to client! :)))
-  response.redirect("/");
-  console.log("Success!");
-});
-
-app.get("/api/auth", (request, response) => {
-  console.log("trying to auth user");
-  if (request.isAuthenticated()) {
-    response.json({ success: `hello ${request.user.firstName}` });
-  } else {
-    response.json({ error: "YOU ARE NOT AUTHENTICATED" });
-  }
-});
+app.use("/api", authRouter);
 
 app.get("/api/user", async (request, response) => {
   console.log("Loading user information");
