@@ -4,9 +4,6 @@ const app = express();
 const passport = require("passport");
 require("dotenv").config();
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 // Facebook Passport:
 const Strategy = require("passport-facebook").Strategy;
 

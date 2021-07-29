@@ -27,7 +27,7 @@ app.use(
 app.use(cookieParser("secretcode"));
 
 app.use(passport.initialize());
-// app.use(passport.session());
+app.use(passport.session());
 
 // // Facebook Passport:
 // const Strategy = require("passport-facebook").Strategy;
