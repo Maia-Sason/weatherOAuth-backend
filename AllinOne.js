@@ -1,12 +1,8 @@
-const db = require("./helpers/sequelizedb"); // Database
 const express = require("express"); // Express framework
-const cors = require("cors"); // cors cross origin resource sharing :)
 const passport = require("./helpers/passportFacebook"); // passport authentication for node (Oauth)
-const api_helper = require("./helpers/api_helpers");
 const path = require("path");
 
 require("dotenv").config();
-var fs = require("fs");
 
 const app = express();
 
@@ -40,30 +36,6 @@ app.use(
 app.use("/auth", authRouter);
 app.use("/api", apiRouter);
 app.use("/user", apiUser);
-
-// app.get("/user", async (request, response) => {
-//   console.log("Loading user information");
-//   if (request.isAuthenticated()) {
-//     let table = await db.LocationTable.findOne({
-//       where: { UserId: request.user.id },
-//     });
-
-//     if (table === undefined) {
-//       table = await db.newTable(request.user);
-//     }
-
-//     let locations = await db.Location.findAll({
-//       attributes: ["longitude", "latitude"],
-//       where: { LocationTableId: table.id },
-//     });
-
-//     data = Object.assign({}, request.user, { locations: locations });
-
-//     response.json(data);
-//   } else {
-//     response.json({ error: "User not authenticated!" });
-//   }
-// });
 
 app.use(express.static(path.join(__dirname, "build")));
 app.get("/", (req, res) => {
