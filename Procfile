@@ -1,1 +1,1 @@
-web: node ./AllinOne.js
+web: node ./server.js
