@@ -68,7 +68,7 @@ router.post("/location", async (request, response) => {
       error: "User needs to be authenticated for this feature!",
     });
   }
-  console.log("Retrieving new location");
+  console.log("Posting new location");
   let latitude = request.body.lat;
   let longitude = request.body.long;
 
