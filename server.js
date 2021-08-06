@@ -38,9 +38,10 @@ app.use("/api", apiRouter);
 app.use("/user", apiUser);
 
 app.use(express.static(path.join(__dirname, "build")));
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+app.use("/login", express.static(path.join(__dirname, "build")));
+app.use("/logout", express.static(path.join(__dirname, "build")));
+app.use("/sources", express.static(path.join(__dirname, "build")));
+app.use("/terms", express.static(path.join(__dirname, "build")));
 
 const port = process.env.PORT || 3003;
 
