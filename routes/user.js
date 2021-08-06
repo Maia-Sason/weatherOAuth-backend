@@ -8,7 +8,7 @@ router.get("/", async (request, response) => {
       where: { UserId: request.user.id },
     });
 
-    if (table === undefined) {
+    if (!table) {
       table = await db.newTable(request.user);
     }
 
